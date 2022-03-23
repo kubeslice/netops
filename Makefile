@@ -5,4 +5,11 @@ compile: ## Compile the proto file.
 .PHONY: kubeslice-netops
 kubeslice-netops: ## Build and run kubeslice-netops.
 	go build -race -ldflags "-s -w" -o bin/kubeslice-netops main.go
-	bin/kubeslice-netops
+
+.PHONY: docker-build
+docker-build: kubeslice-netops
+	docker build -t kubeslice-netop:latest-release --build-arg PLATFORM=amd64 . && docker tag kubeslice-netop:latest-release nexus.dev.aveshalabs.io/kubeslice/netops:latest-stable
+
+.PHONY: docker-push
+docker-push:
+	docker push nexus.dev.aveshalabs.io/kubeslice/netops:latest-stable

@@ -446,3 +446,23 @@ func (s *NetOps) handleSliceLifeCycleEvent(sliceName string, sliceEvent netops.E
 	}
 	return nil
 }
+
+func updateSliceGwInfo(sliceID string, gwInfo *SliceGwInfo) {
+	_, found := NetOpHandle[sliceID]
+	if !found {
+		logger.GlobalLogger.Infof("Slice info not available yet: %v. Cannot update GW info", sliceID)
+		return
+	}
+	_, found = NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId]
+	if !found {
+		NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId] = gwInfo
+	} else {
+		// Check if sliceGW info has changed.
+		if NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].gwType != gwInfo.gwType ||
+			NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].localPort != gwInfo.localPort ||
+			NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].remotePort != gwInfo.remotePort {
+			NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId] = gwInfo
+			NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].tcConfigured = false
+		}
+	}
+}
