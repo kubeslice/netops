@@ -26,8 +26,8 @@ FROM ${PLATFORM}/alpine:3.15
 
 # Add the necessary pakages:
 # tc - is needed for traffic control and shaping on the kubeslice-netops.  it is part of the iproute2
-RUN apk add --no-cache ca-certificates
-
+RUN apk add --no-cache ca-certificates \
+    iproute2
 # Run the kubeslice-netops binary.
 WORKDIR /kubeslice
 

@@ -14,6 +14,7 @@ type classType string
 
 type SliceGwInfo struct {
 	// Slice GW ID
+	sliceGwId string
 	gwType       sliceGwType
 	localPort    string
 	remotePort   string
