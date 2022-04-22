@@ -1,1 +1,1 @@
-# kubeslice-netops
+# netops
