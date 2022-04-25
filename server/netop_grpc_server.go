@@ -20,8 +20,8 @@ package server
 import (
 	"context"
 
-	"github.com/aveshasystems/kubeslice-netops/logger"
-	netops "github.com/aveshasystems/kubeslice-netops/pkg/proto"
+	"github.com/kubeslice/netops/logger"
+	netops "github.com/kubeslice/netops/pkg/proto"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

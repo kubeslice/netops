@@ -1,4 +1,4 @@
-module github.com/aveshasystems/kubeslice-netops
+module github.com/kubeslice/netops
 
 go 1.17
 

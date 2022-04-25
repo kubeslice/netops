@@ -22,9 +22,9 @@ import (
 	"fmt"
 	"os"
 
-	netops "github.com/aveshasystems/kubeslice-netops/pkg/proto"
+	netops "github.com/kubeslice/netops/pkg/proto"
 
-	"github.com/aveshasystems/kubeslice-netops/logger"
+	"github.com/kubeslice/netops/logger"
 )
 
 var (

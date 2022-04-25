@@ -25,11 +25,11 @@ import (
 	"sync"
 	"syscall"
 
-	netops "github.com/aveshasystems/kubeslice-netops/pkg/proto"
+	netops "github.com/kubeslice/netops/pkg/proto"
 	"google.golang.org/grpc"
 
-	"github.com/aveshasystems/kubeslice-netops/logger"
-	"github.com/aveshasystems/kubeslice-netops/server"
+	"github.com/kubeslice/netops/logger"
+	"github.com/kubeslice/netops/server"
 )
 
 // startGrpcServer shall start the GRPC server to communicate to Slice Controller

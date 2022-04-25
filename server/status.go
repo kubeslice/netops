@@ -24,7 +24,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/aveshasystems/kubeslice-netops/logger"
+	"github.com/kubeslice/netops/logger"
 
 	"github.com/google/shlex"
 )
