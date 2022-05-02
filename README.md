@@ -13,14 +13,11 @@ It is strongly recommended to use a released version.
   cluster 
 * [`kubectl`](https://kubernetes.io/docs/tasks/tools/) installed and configured
 
-### Installation
-To install: 
-
-1. Clone the latest version of netops from  the `master` branch.
+### Usages
+You can view the NetOp Pods by using the command below:
 
 ```bash
-  git clone https://github.com/kubeslice/netops.git
-  cd netops
+kubectl get pods -n avesha-system | grep netops
 ```
 
 ## License
