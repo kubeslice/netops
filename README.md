@@ -1,31 +1,24 @@
 # netops
-=======
-# README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+The NetOp Pods enforce the QoS Profile for a Slice. It uses Linux TC (Traffic Control) for Slice traffic classification.
 
-### What is this repository for? ###
+## Getting Started
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+It is strongly recommended to use a released version.
 
-### How do I get set up? ###
+### Prerequisites
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+* Docker installed and running in your local machine
+* A running [`kind`](https://kind.sigs.k8s.io/) or [`Docker Desktop Kubernetes`](https://docs.docker.com/desktop/kubernetes/)
+  cluster 
+* [`kubectl`](https://kubernetes.io/docs/tasks/tools/) installed and configured
 
-### Contribution guidelines ### 
+### Usages
+You can view the NetOp Pods by using the command below:
 
-* Writing tests
-* Code review
-* Other guidelines
+```bash
+kubectl get pods -n avesha-system | grep netops
+```
 
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+## License
+This project is released under the Apache 2.0 License.
