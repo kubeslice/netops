@@ -13,6 +13,15 @@ It is strongly recommended to use a released version.
   cluster 
 * [`kubectl`](https://kubernetes.io/docs/tasks/tools/) installed and configured
 
+### Build and push docker images
+
+```bash
+git clone https://github.com/kubeslice/netops.git
+cd netops
+make docker-build
+make docker-push
+```
+
 ### Usages
 You can view the NetOp Pods by using the command below:
 
