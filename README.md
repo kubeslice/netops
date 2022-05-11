@@ -23,7 +23,7 @@ make docker-push
 ```
 
 ### Deploying in kind
-Once you build the image for local development you can load the image into the kind cluster bt using the command below:
+For local development use the below command to load the docker image into kind cluster
 
 ```bash
 kind load docker-image <image-name>:<tag> --name <clustername>
