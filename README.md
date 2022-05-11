@@ -1,6 +1,6 @@
 # netops
 
-The NetOp Pods enforce the QoS Profile for a Slice. It uses Linux TC (Traffic Control) for Slice traffic classification.
+The netop pods enforce the QoS Profile for a Slice. It uses Linux TC (Traffic Control) for Slice traffic classification.
 
 ## Getting Started
 
@@ -21,19 +21,20 @@ cd netops
 make docker-build
 ```
 
-### Deploying in kind
-For local development use the below command to load the docker image into kind cluster
+### Running locally on Kind
+
+You can run the operator on your Kind cluster with the below command
 
 ```bash
-kind load docker-image <image-name>:<tag> --name <clustername>
+kind load docker-image my-custom-image:unique-tag --name clustername
 ```
 
-### Usages
+### Verification
 You can view the NetOp Pods by using the command below:
 
 ```bash
-kubectl get pods -n kubeslice-system | grep netops
+kubectl get pods -n kubeslice-system | grep netop
 ```
 
 ## License
-This project is released under the Apache 2.0 License.
+Apache 2.0 License.
