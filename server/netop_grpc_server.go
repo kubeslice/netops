@@ -22,7 +22,6 @@ import (
 
 	"github.com/kubeslice/netops/logger"
 	netops "github.com/kubeslice/netops/pkg/proto"
-
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -37,7 +36,7 @@ func (s *NetOps) UpdateSliceQosProfile(ctx context.Context, qosProfile *netops.S
 	if ctx.Err() == context.Canceled {
 		return nil, status.Errorf(codes.Canceled, "Client canceled, ignoring qos update message.")
 	}
-	if qosProfile == nil {
+	if qosProfile.SliceId == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "Qos profile message is empty")
 	}
 
@@ -66,7 +65,7 @@ func (s *NetOps) UpdateSliceLifeCycleEvent(ctx context.Context, sliceEvent *neto
 	if ctx.Err() == context.Canceled {
 		return nil, status.Errorf(codes.Canceled, "Client canceled, ignoring qos update message.")
 	}
-	if sliceEvent == nil {
+	if sliceEvent.SliceName == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "Slice lifecycle message is empty")
 	}
 
