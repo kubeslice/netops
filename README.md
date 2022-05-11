@@ -22,11 +22,18 @@ make docker-build
 make docker-push
 ```
 
+### Deploying in kind
+Once you build the image for local development you can load the image into the kind cluster bt using the command below:
+
+```bash
+kind load docker-image <image-name>:<tag> --name <clustername>
+```
+
 ### Usages
 You can view the NetOp Pods by using the command below:
 
 ```bash
-kubectl get pods -n avesha-system | grep netops
+kubectl get pods -n kubeslice-system | grep netops
 ```
 
 ## License
