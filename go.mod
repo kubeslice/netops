@@ -3,7 +3,6 @@ module github.com/kubeslice/netops
 go 1.17
 
 require (
-	bitbucket.org/realtimeai/kubeslice-netops v1.0.0
 	github.com/golang/protobuf v1.4.2
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
 	go.uber.org/zap v1.16.0
