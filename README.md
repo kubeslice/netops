@@ -17,7 +17,7 @@ It is strongly recommended to use a released version.
 
 ### Local build and update 
 
-#### Latest docker image
+#### Latest docker hub image
 
 ```console
 docker pull aveshasystems/netops:latest
