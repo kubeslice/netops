@@ -55,11 +55,30 @@ make docker-build
 
 ### Running locally on Kind
 
-Load the docker image into kind cluster
+1. You can load the netops image on your Kind cluster with the below command
 
 ```bash
 kind load docker-image my-custom-image:unique-tag --name clustername
 ```
+
+example:
+
+```console
+kind load docker-image aveshasystems/netops:1.2.1 --name kind
+```
+
+2. Check the loaded image in the cluster. Modify node name if required.
+
+```console
+docker exec -it <node-name> crictl images
+```
+
+example:
+
+```console
+docker exec -it kind-control-plane crictl images
+```
+
 
 ### Deploy in a cluster
 
