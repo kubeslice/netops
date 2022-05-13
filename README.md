@@ -1,4 +1,7 @@
-# netops
+# Netops
+
+![Docker Image Size](https://img.shields.io/docker/image-size/aveshasystems/netops)
+![Docker Image Version](https://img.shields.io/docker/v/aveshasystems/netops?sort=date)
 
 The netop pods enforce the QoS Profile for a Slice. It uses Linux TC (Traffic Control) for Slice traffic classification.
 
