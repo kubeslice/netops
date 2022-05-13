@@ -4,9 +4,11 @@
 The netop pods enforce the QoS Profile for a Slice. It uses Linux TC (Traffic Control) for Slice traffic classification.
 
 ## Getting Started
-
-[TBD add link to getting started] 
 It is strongly recommended to use a released version.
+
+For information on installing KubeSlice on kind clusters, see [getting started with kind clusters](https://docs.avesha.io/opensource/getting-started-with-kind-clusters) or try out the example script in [kind-based example](https://github.com/kubeslice/examples/tree/master/kind).
+
+For information on installing KubeSlice on cloud clusters, see [getting started with cloud clusters](https://docs.avesha.io/opensource/getting-started-with-cloud-clusters). 
 
 ### Prerequisites
 
@@ -15,23 +17,23 @@ It is strongly recommended to use a released version.
 * [`kubectl`](https://kubernetes.io/docs/tasks/tools/) installed and configured
 * Follow the getting started from above, to install [`kubeslice-controller`](https://github.com/kubeslice/kubeslice-controller) and [`worker-operator`](https://github.com/kubeslice/worker-operator)
 
-### Local build and update 
+### Local Build and Update 
 
-#### Latest docker hub image
+#### Latest Docker Hub Image
 
 ```console
 docker pull aveshasystems/netops:latest
 ```
 
-### Setting up your helm repo
+### Setting up Your Helm Repo
 
-If you have not added avesha helm repo yet, add it
+If you have not added avesha helm repo yet, add it.
 
 ```console
 helm repo add avesha https://kubeslice.github.io/charts/
 ```
 
-upgrade the avesha helm repo
+Upgrade the avesha helm repo.
 
 ```console
 helm repo update
@@ -47,13 +49,13 @@ cd netops
 ```
 
 2. Adjust `VERSION` variable in the Makefile to change the docker tag to be built.
-Image is set as `docker.io/aveshasystems/netops:$(VERSION)` in the Makefile. Change this if required
+Image is set as `docker.io/aveshasystems/netops:$(VERSION)` in the Makefile. Change this if required.
 
 ```bash
 make docker-build
 ```
 
-### Running locally on Kind
+### Running Locally on Kind Clusters
 
 1. You can load the netops image on your Kind cluster with the below command
 
@@ -61,7 +63,7 @@ make docker-build
 kind load docker-image my-custom-image:unique-tag --name clustername
 ```
 
-example:
+Example
 
 ```console
 kind load docker-image aveshasystems/netops:1.2.1 --name kind
@@ -73,19 +75,19 @@ kind load docker-image aveshasystems/netops:1.2.1 --name kind
 docker exec -it <node-name> crictl images
 ```
 
-example:
+Example
 
 ```console
 docker exec -it kind-control-plane crictl images
 ```
 
 
-### Deploy in a cluster
+### Deploy in a Cluster
 
 Update chart values file `yourvaluesfile.yaml` that you have previously created.
 Refer to [values.yaml](https://github.com/kubeslice/charts/blob/master/kubeslice-worker/values.yaml) to create `yourvaluesfiel.yaml` and update the netop image subsection to use the local image.
 
-From the sample , 
+From the sample, 
 
 ```
 netop:
@@ -93,7 +95,7 @@ netop:
   tag: 0.1.0
 ```
 
-Change it to ,
+Change it to,
 
 ```
 netop:
@@ -107,7 +109,7 @@ Deploy the updated chart
 make chart-deploy VALUESFILE=yourvaluesfile.yaml
 ```
 
-### Verify the NetOp Pods are running:
+### Verify the NetOp Pods are Running:
 
 ```bash
 kubectl get pods -n kubeslice-system | grep netop
