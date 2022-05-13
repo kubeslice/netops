@@ -87,7 +87,7 @@ docker exec -it kind-control-plane crictl images
 Update chart values file `yourvaluesfile.yaml` that you have previously created.
 Refer to [values.yaml](https://github.com/kubeslice/charts/blob/master/kubeslice-worker/values.yaml) to create `yourvaluesfiel.yaml` and update the netop image subsection to use the local image.
 
-From the sample, 
+From the sample: 
 
 ```
 netop:
@@ -95,7 +95,7 @@ netop:
   tag: 0.1.0
 ```
 
-Change it to,
+Change it to:
 
 ```
 netop:
@@ -103,13 +103,13 @@ netop:
   tag: <unique-tag>
 ```
 
-Deploy the updated chart
+Deploy the updated chart.
 
 ```console
 make chart-deploy VALUESFILE=yourvaluesfile.yaml
 ```
 
-### Verify the NetOp Pods are Running:
+### Verify if the NetOp Pods are Running
 
 ```bash
 kubectl get pods -n kubeslice-system | grep netop
