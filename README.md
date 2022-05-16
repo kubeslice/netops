@@ -114,6 +114,11 @@ make chart-deploy VALUESFILE=yourvaluesfile.yaml
 ```bash
 kubectl get pods -n kubeslice-system | grep netop
 ```
+Example output
+
+```
+avesha-netop-pnbbr                         1/1     Running   0          4d23h
+```
 
 ## License
 Apache 2.0 License.
