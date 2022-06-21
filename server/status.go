@@ -35,14 +35,14 @@ func runTcCommand(tcCmd string) (string, error) {
 	var cmdOut string = ""
 	cmdOut, err = runCommand(tcCmd)
 	if err != nil {
-		errStr := fmt.Sprintf("tc Command: %v execution failed with err: %v and stderr : %v", tcCmd, err, cmdOut)
+		errStr := TcCmdError(tcCmd, err, cmdOut)
 		logger.GlobalLogger.Errorf(errStr)
 
 		if strings.Contains(cmdOut, "RTNETLINK answers: File exists") {
 			tcDelCmd := strings.Replace(tcCmd, "add", "del", -1)
 			cmdOut, err = runCommand(tcDelCmd)
 			if err != nil {
-				errStr := fmt.Sprintf("tc Command: %v execution failed with err: %v and stderr : %v", tcDelCmd, err, cmdOut)
+				errStr := TcCmdError(tcCmd, err, cmdOut)
 				logger.GlobalLogger.Errorf(errStr)
 				errVal = errors.New(errStr)
 			}
@@ -51,7 +51,7 @@ func runTcCommand(tcCmd string) (string, error) {
 			// Re run the tc command
 			cmdOut, err = runCommand(tcCmd)
 			if err != nil {
-				errStr := fmt.Sprintf("tc Command: %v execution failed with err: %v and stderr : %v", tcCmd, err, cmdOut)
+				errStr := TcCmdError(tcCmd, err, cmdOut)
 				errVal = errors.New(errStr)
 			}
 			logger.GlobalLogger.Infof("tc Command: %v output :%v", tcCmd, cmdOut)
