@@ -78,17 +78,17 @@ func TcCmdError(tcCmd string, err error, cmdOut string) string {
 	return errStr
 }
 
-func TcCmdOut(tcCmd string, cmdOut string) string {
+func tcCmdOut(tcCmd string, cmdOut string) string {
 	output := fmt.Sprintf("tc Command: %v output :%v", tcCmd, cmdOut)
 	return output
 }
 
-func TcCmdShowNetInf(netIface string) string {
+func tcCmdShowNetInf(netIface string) string {
 	output := fmt.Sprintf("tc qdisc show dev %s", netIface)
 	return output
 }
 
-func SliceIdNotFound(sliceID string) string {
+func sliceIdNotFound(sliceID string) string {
 	output := fmt.Sprintf("SliceId %v is not found", sliceID)
 	return output
 }
@@ -101,14 +101,14 @@ func netOpAddTcRootQdisc() error {
 		logger.GlobalLogger.Errorf(errStr)
 		return errors.New(errStr)
 	}
-	logger.GlobalLogger.Infof(TcCmdOut(tcCmd, cmdOut))
-	tcCmd = TcCmdShowNetInf(netIface)
+	logger.GlobalLogger.Infof(tcCmdOut(tcCmd, cmdOut))
+	tcCmd = tcCmdShowNetInf(netIface)
 	cmdOut, err = runTcCommand(tcCmd)
 	if err != nil {
 		errStr := TcCmdError(tcCmd, err, cmdOut)
 		logger.GlobalLogger.Errorf(errStr)
 	}
-	logger.GlobalLogger.Infof(TcCmdOut(tcCmd, cmdOut))
+	logger.GlobalLogger.Infof(tcCmdOut(tcCmd, cmdOut))
 
 	return nil
 }
@@ -121,14 +121,14 @@ func netOpDelTcRootQdisc() error {
 		logger.GlobalLogger.Errorf(errStr)
 		return errors.New(errStr)
 	}
-	logger.GlobalLogger.Infof(TcCmdOut(tcCmd, cmdOut))
-	tcCmd = TcCmdShowNetInf(tcCmd)
+	logger.GlobalLogger.Infof(tcCmdOut(tcCmd, cmdOut))
+	tcCmd = tcCmdShowNetInf(tcCmd)
 	cmdOut, err = runTcCommand(tcCmd)
 	if err != nil {
 		errStr := TcCmdError(tcCmd, err, cmdOut)
 		logger.GlobalLogger.Errorf(errStr)
 	}
-	logger.GlobalLogger.Infof(TcCmdOut(tcCmd, cmdOut))
+	logger.GlobalLogger.Infof(tcCmdOut(tcCmd, cmdOut))
 
 	return nil
 }
@@ -154,7 +154,7 @@ func (s *NetOps) configureTcForSliceGwPort(gwType sliceGwType, localPort string,
 		logger.GlobalLogger.Errorf(errStr)
 		return errors.New(errStr)
 	}
-	logger.GlobalLogger.Infof(TcCmdOut(tcCmd, cmdOut))
+	logger.GlobalLogger.Infof(tcCmdOut(tcCmd, cmdOut))
 
 	tcCmd = fmt.Sprintf("tc filter show dev %s", netIface)
 	cmdOut, err = runTcCommand(tcCmd)
@@ -162,7 +162,7 @@ func (s *NetOps) configureTcForSliceGwPort(gwType sliceGwType, localPort string,
 		errStr := TcCmdError(tcCmd, err, cmdOut)
 		logger.GlobalLogger.Errorf(errStr)
 	}
-	logger.GlobalLogger.Infof(TcCmdOut(tcCmd, cmdOut))
+	logger.GlobalLogger.Infof(tcCmdOut(tcCmd, cmdOut))
 
 	return nil
 }
@@ -170,7 +170,7 @@ func (s *NetOps) configureTcForSliceGwPort(gwType sliceGwType, localPort string,
 func (s *NetOps) configureTcForSliceGw(sliceID string, newTc *TcInfo) error {
 	sliceInfo, found := NetOpHandle[sliceID]
 	if !found {
-		errVal := SliceIdNotFound(sliceID)
+		errVal := sliceIdNotFound(sliceID)
 		return errors.New(errVal)
 	}
 	for k := range sliceInfo.sliceGwInfo {
@@ -227,14 +227,14 @@ func (s *NetOps) configureParentTcForSlice(sliceID string, newTc *TcInfo) error 
 		logger.GlobalLogger.Errorf(errStr)
 		return errors.New(errStr)
 	}
-	logger.GlobalLogger.Infof(TcCmdOut(tcCmd, cmdOut))
-	tcCmd = TcCmdShowNetInf(netIface)
+	logger.GlobalLogger.Infof(tcCmdOut(tcCmd, cmdOut))
+	tcCmd = tcCmdShowNetInf(netIface)
 	cmdOut, err = runTcCommand(tcCmd)
 	if err != nil {
 		errStr := TcCmdError(tcCmd, err, cmdOut)
 		logger.GlobalLogger.Errorf(errStr)
 	}
-	logger.GlobalLogger.Infof(TcCmdOut(tcCmd, cmdOut))
+	logger.GlobalLogger.Infof(tcCmdOut(tcCmd, cmdOut))
 
 	NetOpHandle[sliceID].tcParentClassFqId = classIdStr
 	NetOpHandle[sliceID].tcInited = true
@@ -281,7 +281,7 @@ func (s *NetOps) deleteTcForSlice(sliceID string) error {
 func (s *NetOps) configureTcForSlice(sliceID string, newTc *TcInfo) error {
 	sliceInfo, found := NetOpHandle[sliceID]
 	if !found {
-		errVal := SliceIdNotFound(sliceID)
+		errVal := sliceIdNotFound(sliceID)
 		return errors.New(errVal)
 	}
 
@@ -294,29 +294,28 @@ func (s *NetOps) configureTcForSlice(sliceID string, newTc *TcInfo) error {
 	if (*sliceInfo.tc) == (*newTc) {
 		logger.GlobalLogger.Infof("No change in Slice TC params, ignoring update")
 		return nil
-	} else {
-		logger.GlobalLogger.Infof("Slice TC params updated. Old: %v, New: %v", sliceInfo.tc, newTc)
-		// Modify parent class config
-		tcCmd := fmt.Sprintf("tc class replace dev %s parent %d: classid %s htb rate %dkbit burst 64k",
-			netIface, htbRootHandleId, sliceInfo.tcParentClassFqId, newTc.bwCeiling)
-		cmdOut, err := runTcCommand(tcCmd)
-		if err != nil {
-			errStr := TcCmdError(tcCmd, err, cmdOut)
-			logger.GlobalLogger.Errorf(errStr)
-			return errors.New(errStr)
-		}
-
-		// Modify leaf class config
-		tcCmd = fmt.Sprintf("tc class replace dev %s parent %s classid %s htb rate %dkbit ceil %dkbit burst 32k",
-			netIface, sliceInfo.tcParentClassFqId, sliceInfo.tcLeafClassFqId, newTc.bwGuaranteed, newTc.bwCeiling)
-		cmdOut, err = runTcCommand(tcCmd)
-		if err != nil {
-			errStr := TcCmdError(tcCmd, err, cmdOut)
-			logger.GlobalLogger.Errorf(errStr)
-			return errors.New(errStr)
-		}
-		sliceInfo.tc = newTc
 	}
+	logger.GlobalLogger.Infof("Slice TC params updated. Old: %v, New: %v", sliceInfo.tc, newTc)
+	// Modify parent class config
+	tcCmd := fmt.Sprintf("tc class replace dev %s parent %d: classid %s htb rate %dkbit burst 64k",
+		netIface, htbRootHandleId, sliceInfo.tcParentClassFqId, newTc.bwCeiling)
+	cmdOut, err := runTcCommand(tcCmd)
+	if err != nil {
+		errStr := TcCmdError(tcCmd, err, cmdOut)
+		logger.GlobalLogger.Errorf(errStr)
+		return errors.New(errStr)
+	}
+
+	// Modify leaf class config
+	tcCmd = fmt.Sprintf("tc class replace dev %s parent %s classid %s htb rate %dkbit ceil %dkbit burst 32k",
+		netIface, sliceInfo.tcParentClassFqId, sliceInfo.tcLeafClassFqId, newTc.bwGuaranteed, newTc.bwCeiling)
+	cmdOut, err = runTcCommand(tcCmd)
+	if err != nil {
+		errStr := TcCmdError(tcCmd, err, cmdOut)
+		logger.GlobalLogger.Errorf(errStr)
+		return errors.New(errStr)
+	}
+	sliceInfo.tc = newTc
 
 	if !sliceInfo.tcInited {
 		err := s.configureParentTcForSlice(sliceID, newTc)
@@ -334,15 +333,15 @@ func (s *NetOps) configureTcForSlice(sliceID string, newTc *TcInfo) error {
 	// the child class ID is ok for now. Needs to be modified if there is a use case in the future that
 	// requires us to create multiple child classes under the parent class.
 	classID := fmt.Sprintf("%d:%d", htbRootHandleId, sliceInfo.tcParentClassId+1)
-	tcCmd := fmt.Sprintf("tc class add dev %s parent %s classid %s htb rate %dkbit ceil %dkbit burst 32k",
+	tcCmd = fmt.Sprintf("tc class add dev %s parent %s classid %s htb rate %dkbit ceil %dkbit burst 32k",
 		netIface, sliceInfo.tcParentClassFqId, classID, newTc.bwGuaranteed, newTc.bwCeiling)
-	cmdOut, err := runTcCommand(tcCmd)
+	cmdOut, err = runTcCommand(tcCmd)
 	if err != nil {
 		errStr := TcCmdError(tcCmd, err, cmdOut)
 		logger.GlobalLogger.Errorf(errStr)
 		return errors.New(errStr)
 	}
-	logger.GlobalLogger.Infof(TcCmdOut(tcCmd, cmdOut))
+	logger.GlobalLogger.Infof(tcCmdOut(tcCmd, cmdOut))
 	NetOpHandle[sliceID].tcLeafClassFqId = classID
 
 	// Martin Devera, author of HTB, then recommends SFQ for beneath these classes:
@@ -354,15 +353,15 @@ func (s *NetOps) configureTcForSlice(sliceID string, newTc *TcInfo) error {
 		logger.GlobalLogger.Errorf(errStr)
 		return errors.New(errStr)
 	}
-	logger.GlobalLogger.Infof(TcCmdOut(tcCmd, cmdOut))
+	logger.GlobalLogger.Infof(tcCmdOut(tcCmd, cmdOut))
 
-	tcCmd = TcCmdShowNetInf(netIface)
+	tcCmd = tcCmdShowNetInf(netIface)
 	cmdOut, err = runTcCommand(tcCmd)
 	if err != nil {
 		errStr := TcCmdError(tcCmd, err, cmdOut)
 		logger.GlobalLogger.Errorf(errStr)
 	}
-	logger.GlobalLogger.Infof(TcCmdOut(tcCmd, cmdOut))
+	logger.GlobalLogger.Infof(tcCmdOut(tcCmd, cmdOut))
 
 	sliceInfo.tc = newTc
 
@@ -372,7 +371,7 @@ func (s *NetOps) configureTcForSlice(sliceID string, newTc *TcInfo) error {
 func (s *NetOps) enforceSliceTc(sliceID string, newTc *TcInfo) error {
 	_, found := NetOpHandle[sliceID]
 	if !found {
-		errVal := SliceIdNotFound(sliceID)
+		errVal := sliceIdNotFound(sliceID)
 		return errors.New(errVal)
 	}
 
