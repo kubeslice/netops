@@ -286,8 +286,9 @@ func (s *NetOps) configureTcForSlice(sliceID string, newTc *TcInfo) error {
 	}
 
 	if sliceInfo.tc == nil {
-		logger.GlobalLogger.Infof("Recieved nil value for tc configuration from slice controller")
-		return nil
+		errStr := fmt.Sprintln("recieved nil value for tc configuration from slice controller")
+		logger.GlobalLogger.Errorf(errStr)
+		return errors.New(errStr)
 	}
 
 	// Check if there are any changes in TC parameters.
