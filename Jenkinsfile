@@ -1,5 +1,5 @@
-@Library('jenkins-library@opensource') _
-dockerImagePipeline(
+@Library('jenkins-library@main') _
+dockerImagePipelineos(
   script: this,
   service: 'netops',
   dockerfile: 'Dockerfile',
