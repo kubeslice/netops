@@ -46,7 +46,7 @@ WorkerChartOptions:
   Repo: https://kubeslice.github.io/kubeslice/
   SetStrValues:
     "netop.image": "netops"
-    "netop.tag": "e2e-latest"
+    "netop.tag": "${GITHUB_HEAD_COMMIT}"
 TestSuitesEnabled:
   HubSuite: true
   WorkerSuite: true
