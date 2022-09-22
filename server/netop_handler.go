@@ -84,7 +84,6 @@ func getInterfaceConnectedToBridge(brint string) (string, error) {
 	return brint, nil
 }
 
-
 func getNetworkInterfaceName() (string, error) {
 	// If the env var is set, use it instead of auto detecting
 	if os.Getenv("NETWORK_INTERFACE") != "" {
@@ -100,23 +99,23 @@ func getNetworkInterfaceName() (string, error) {
 	}
 
 	for _, route := range routes {
-	        link, err := netlink.LinkByIndex(route.LinkIndex)
-	        if err != nil {
-		        continue
-	        }
+		link, err := netlink.LinkByIndex(route.LinkIndex)
+		if err != nil {
+			continue
+		}
 		if link.Attrs().Name != "" {
 			// Need special handling for bridge interface types
 			if link.Type() == "bridge" || link.Type() == "openvswitch" {
-			        logger.GlobalLogger.Infof("Bridge intf: %v, type: %v", link.Attrs(), link.Type())
+				logger.GlobalLogger.Infof("Bridge intf: %v, type: %v", link.Attrs(), link.Type())
 				brint, err := getInterfaceConnectedToBridge(link.Attrs().Name)
 				if err != nil {
 					return "", err
 				}
-			        logger.GlobalLogger.Infof("Using link: %v, type: %v", link.Attrs(), link.Type())
+				logger.GlobalLogger.Infof("Using link: %v, type: %v", link.Attrs(), link.Type())
 				return brint, nil
 			}
 			logger.GlobalLogger.Infof("Using link: %v, type: %v", link.Attrs(), link.Type())
-	                return link.Attrs().Name, nil
+			return link.Attrs().Name, nil
 		}
 	}
 
@@ -131,7 +130,7 @@ func BootstrapNetOpPod() error {
 
 	var err error
 	netIface, err = getNetworkInterfaceName()
-        if err != nil {
+	if err != nil {
 		return err
 	}
 
