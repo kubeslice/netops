@@ -20,11 +20,13 @@ package server
 import (
 	"errors"
 	"fmt"
+	"net"
 	"os"
 
 	netops "github.com/kubeslice/netops/pkg/proto"
 
 	"github.com/kubeslice/netops/logger"
+	"github.com/vishvananda/netlink"
 )
 
 var (
@@ -49,27 +51,97 @@ var (
 	// Child classes under slice 1 would range from :12 to :21, while child classes
 	// under slice 2 from :23 to :32.
 	tcParentClassIdMultiple uint32 = 11
+	// Well known internet address for route probe
+	wellKnownPublicIP string = "8.8.8.8"
 )
 
 const MAX_NUM_OF_SLICE uint32 = 100
+
+func getInterfaceConnectedToBridge(brint string) (string, error) {
+	brlink, err := netlink.LinkByName(brint)
+	brMac := brlink.Attrs().HardwareAddr.String()
+
+	links, err := netlink.LinkList()
+	if err != nil {
+		return "", err
+	}
+
+	// Loop through all the interfaces and check if there is an
+	// interface with the same MAC address as the bridge interface.
+	// The bridge assumes the MAC address of the interface that is the
+	// egress interface for cluster-external traffic.
+	for _, link := range links {
+		if link.Attrs().Name == brint {
+			continue
+		}
+		if link.Attrs().HardwareAddr.String() == brMac {
+			return link.Attrs().Name, nil
+		}
+	}
+
+	// Interface with same MAC as the bridge interface not found. Fall back to
+	// using the bridge interface itself.
+	return brint, nil
+}
+
+
+func getNetworkInterfaceName() (string, error) {
+	// If the env var is set, use it instead of auto detecting
+	if os.Getenv("NETWORK_INTERFACE") != "" {
+		return os.Getenv("NETWORK_INTERFACE"), nil
+	}
+
+	routes, err := netlink.RouteGet(net.ParseIP(wellKnownPublicIP))
+	if err != nil {
+		return "", err
+	}
+	if len(routes) == 0 {
+		return "", errors.New("Cannot lookup public IP")
+	}
+
+	for _, route := range routes {
+	        link, err := netlink.LinkByIndex(route.LinkIndex)
+	        if err != nil {
+		        continue
+	        }
+		if link.Attrs().Name != "" {
+			// Need special handling for bridge interface types
+			if link.Type() == "bridge" || link.Type() == "openvswitch" {
+			        logger.GlobalLogger.Infof("Bridge intf: %v, type: %v", link.Attrs(), link.Type())
+				brint, err := getInterfaceConnectedToBridge(link.Attrs().Name)
+				if err != nil {
+					return "", err
+				}
+			        logger.GlobalLogger.Infof("Using link: %v, type: %v", link.Attrs(), link.Type())
+				return brint, nil
+			}
+			logger.GlobalLogger.Infof("Using link: %v, type: %v", link.Attrs(), link.Type())
+	                return link.Attrs().Name, nil
+		}
+	}
+
+	return "", errors.New("Interface not found")
+}
 
 // BootstrapNetOpPod handles the bootstrap of the NetOp Pod.
 func BootstrapNetOpPod() error {
 
 	NetOpHandle = make(map[string]*SliceInfo)
 	tcClassIdMap = make(map[uint32]string)
-	netIface = "eth0"
-	if os.Getenv("NETWORK_INTERFACE") != "" {
-		netIface = os.Getenv("NETWORK_INTERFACE")
+
+	var err error
+	netIface, err = getNetworkInterfaceName()
+        if err != nil {
+		return err
 	}
 
 	// Start with a clean slate:  delete TC root qdisc
-	err := netOpDelTcRootQdisc()
+	err = netOpDelTcRootQdisc()
 	if err != nil {
 		return err
 	}
 
-	logger.GlobalLogger.Infof("NetOp Pod is Bootstraped Successfully")
+	logger.GlobalLogger.Infof("NetOp Pod is Bootstraped Successfully. Using intf: %v", netIface)
 	return nil
 }
 
