@@ -285,38 +285,36 @@ func (s *NetOps) configureTcForSlice(sliceID string, newTc *TcInfo) error {
 		return errors.New(errVal)
 	}
 
-	if sliceInfo.tc == nil {
-		errStr := fmt.Sprintln("recieved nil value for tc configuration from slice controller")
-		logger.GlobalLogger.Errorf(errStr)
-		return errors.New(errStr)
-	}
+	if sliceInfo.tc != nil {
+		// Check if there are any changes in TC parameters.
+		if (*sliceInfo.tc) == (*newTc) {
+			logger.GlobalLogger.Infof("No change in Slice TC params, ignoring update")
+			return nil
+		} else {
+			logger.GlobalLogger.Infof("Slice TC params updated. Old: %v, New: %v", sliceInfo.tc, newTc)
+			// Modify parent class config
+			tcCmd := fmt.Sprintf("tc class replace dev %s parent %d: classid %s htb rate %dkbit burst 64k",
+				netIface, htbRootHandleId, sliceInfo.tcParentClassFqId, newTc.bwCeiling)
+			cmdOut, err := runTcCommand(tcCmd)
+			if err != nil {
+				errStr := TcCmdError(tcCmd, err, cmdOut)
+				logger.GlobalLogger.Errorf(errStr)
+				return errors.New(errStr)
+			}
 
-	// Check if there are any changes in TC parameters.
-	if (*sliceInfo.tc) == (*newTc) {
-		logger.GlobalLogger.Infof("No change in Slice TC params, ignoring update")
-		return nil
+			// Modify leaf class config
+			tcCmd = fmt.Sprintf("tc class replace dev %s parent %s classid %s htb rate %dkbit ceil %dkbit burst 32k",
+				netIface, sliceInfo.tcParentClassFqId, sliceInfo.tcLeafClassFqId, newTc.bwGuaranteed, newTc.bwCeiling)
+			cmdOut, err = runTcCommand(tcCmd)
+			if err != nil {
+				errStr := TcCmdError(tcCmd, err, cmdOut)
+				logger.GlobalLogger.Errorf(errStr)
+				return errors.New(errStr)
+			}
+			sliceInfo.tc = newTc
+			return nil
+		}
 	}
-	logger.GlobalLogger.Infof("Slice TC params updated. Old: %v, New: %v", sliceInfo.tc, newTc)
-	// Modify parent class config
-	tcCmd := fmt.Sprintf("tc class replace dev %s parent %d: classid %s htb rate %dkbit burst 64k",
-		netIface, htbRootHandleId, sliceInfo.tcParentClassFqId, newTc.bwCeiling)
-	cmdOut, err := runTcCommand(tcCmd)
-	if err != nil {
-		errStr := TcCmdError(tcCmd, err, cmdOut)
-		logger.GlobalLogger.Errorf(errStr)
-		return errors.New(errStr)
-	}
-
-	// Modify leaf class config
-	tcCmd = fmt.Sprintf("tc class replace dev %s parent %s classid %s htb rate %dkbit ceil %dkbit burst 32k",
-		netIface, sliceInfo.tcParentClassFqId, sliceInfo.tcLeafClassFqId, newTc.bwGuaranteed, newTc.bwCeiling)
-	cmdOut, err = runTcCommand(tcCmd)
-	if err != nil {
-		errStr := TcCmdError(tcCmd, err, cmdOut)
-		logger.GlobalLogger.Errorf(errStr)
-		return errors.New(errStr)
-	}
-	sliceInfo.tc = newTc
 
 	if !sliceInfo.tcInited {
 		err := s.configureParentTcForSlice(sliceID, newTc)
@@ -334,9 +332,9 @@ func (s *NetOps) configureTcForSlice(sliceID string, newTc *TcInfo) error {
 	// the child class ID is ok for now. Needs to be modified if there is a use case in the future that
 	// requires us to create multiple child classes under the parent class.
 	classID := fmt.Sprintf("%d:%d", htbRootHandleId, sliceInfo.tcParentClassId+1)
-	tcCmd = fmt.Sprintf("tc class add dev %s parent %s classid %s htb rate %dkbit ceil %dkbit burst 32k",
+	tcCmd := fmt.Sprintf("tc class add dev %s parent %s classid %s htb rate %dkbit ceil %dkbit burst 32k",
 		netIface, sliceInfo.tcParentClassFqId, classID, newTc.bwGuaranteed, newTc.bwCeiling)
-	cmdOut, err = runTcCommand(tcCmd)
+	cmdOut, err := runTcCommand(tcCmd)
 	if err != nil {
 		errStr := TcCmdError(tcCmd, err, cmdOut)
 		logger.GlobalLogger.Errorf(errStr)
