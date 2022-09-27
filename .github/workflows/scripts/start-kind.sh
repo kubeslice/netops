@@ -12,7 +12,6 @@ if [ ! $(kind get clusters | grep controller) ];then
 fi
 
 # Create worker1 kind cluster if not present
-# Create worker1 kind cluster if not present
 if [ ! $(kind get clusters | grep worker) ];then
   kind create cluster --name worker --config .github/workflows/scripts/cluster.yaml --image kindest/node:v1.22.7
   ip=$(docker inspect worker-control-plane | jq -r '.[0].NetworkSettings.Networks.kind.IPAddress')
@@ -46,7 +45,7 @@ WorkerChartOptions:
   Repo: https://kubeslice.github.io/kubeslice/
   SetStrValues:
     "netop.image": "netops"
-    "netop.tag": "e2e-latest"
+    "netop.tag": "${GITHUB_HEAD_COMMIT}"
 TestSuitesEnabled:
   HubSuite: true
   WorkerSuite: true
