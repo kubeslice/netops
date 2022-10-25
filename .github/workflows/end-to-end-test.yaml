@@ -33,7 +33,7 @@ jobs:
     - name: build kind clusters
       run: |
         mkdir -p ${{ github.workspace }}/profile
-        sh .github/workflows/scripts/start-kind.sh
+        bash .github/workflows/scripts/start-kind.sh
       env:
         GITHUB_HEAD_COMMIT: ${{ steps.vars.outputs.sha_commit }}
 
