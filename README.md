@@ -1,22 +1,23 @@
-# Netops
+# NetOps
 
 
-The netop pods enforce the QoS Profile for a Slice. It uses Linux TC (Traffic Control) for Slice traffic classification.
+The netop pods enforce the QoS Profile for a slice. It uses Linux TC (Traffic Control) for the slice traffic classification.
 
 ## Getting Started
-It is strongly recommended to use a released version.
 
-For information on installing KubeSlice on kind clusters, see [getting started with kind clusters](https://docs.avesha.io/documentation/open-source/0.2.0/getting-started-with-kind-clusters) or try out the example script in [kind-based example](https://github.com/kubeslice/examples/tree/master/kind).
-
-For information on installing KubeSlice on cloud clusters, see [getting started with cloud clusters](https://docs.avesha.io/documentation/open-source/0.2.0/getting-started-with-cloud-clusters). 
+Please refer to our documentation on:
+- [Installing KubeSlice on cloud clusters](https://kubeslice.io/documentation/open-source/0.5.0/getting-started-with-cloud-clusters/installing-kubeslice/installing-the-kubeslice-controller).
+- [Installing KubeSlice on kind clusters](https://kubeslice.io/documentation/open-source/0.5.0/tutorials/kind-install-kubeslice-controller).
 
 ### Prerequisites
 
-* Docker installed and running in your local machine
-* A running [`kind`](https://kind.sigs.k8s.io/)
-* [`kubectl`](https://kubernetes.io/docs/tasks/tools/) installed and configured
-* Follow the getting started from above, to install [`kubeslice-controller`](https://github.com/kubeslice/kubeslice-controller) and [`worker-operator`](https://github.com/kubeslice/worker-operator)
-
+Before you begin, make sure the following prerequisites are met:
+* Docker is installed and running on your local machine.
+* A running [`kind`](https://kind.sigs.k8s.io/) cluster.
+* [`kubectl`](https://kubernetes.io/docs/tasks/tools/) is installed and configured.
+* You have prepared the environment to install [`kubeslice-controller`](https://github.com/kubeslice/kubeslice-controller) on the controller cluster
+ and [`worker-operator`](https://github.com/kubeslice/worker-operator) on the worker cluster. For more information, see [Prerequisites](https://kubeslice.io/documentation/open-source/0.5.0/getting-started-with-cloud-clusters/prerequisites/).
+ 
 ### Local Build and Update 
 
 #### Latest Docker Hub Image
@@ -48,7 +49,7 @@ git clone https://github.com/kubeslice/netops.git
 cd netops
 ```
 
-2. Adjust `VERSION` variable in the Makefile to change the docker tag to be built.
+2. Adjust the `VERSION` variable in the Makefile to change the docker tag to be built.
 Image is set as `docker.io/aveshasystems/netops:$(VERSION)` in the Makefile. Change this if required.
 
 ```bash
@@ -57,7 +58,7 @@ make docker-build
 
 ### Running Locally on Kind Clusters
 
-1. You can load the netops image on your Kind cluster with the below command
+1. You can load the netops image on your kind cluster using the following command:
 
 ```bash
 kind load docker-image my-custom-image:unique-tag --name clustername
@@ -84,7 +85,7 @@ docker exec -it kind-control-plane crictl images
 
 ### Deploy in a Cluster
 
-Update chart values file `yourvaluesfile.yaml` that you have previously created.
+Update the chart values file called `yourvaluesfile.yaml` that you have previously created.
 Refer to [values.yaml](https://github.com/kubeslice/charts/blob/master/charts/kubeslice-worker/values.yaml) to create `yourvaluesfiel.yaml` and update the netop image subsection to use the local image.
 
 From the sample: 
@@ -109,7 +110,9 @@ Deploy the updated chart.
 make chart-deploy VALUESFILE=yourvaluesfile.yaml
 ```
 
-### Verify if the NetOp Pods are Running
+### Verify the Installation
+
+Verify the installation of NetOps by checking the status of pods belonging to the `kubeslice-system` namespace.
 
 ```bash
 kubectl get pods -n kubeslice-system | grep netop
