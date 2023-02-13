@@ -245,6 +245,7 @@ func (s *NetOps) configureTcForSliceGw(sliceID string, newTc *TcInfo) error {
 		errVal := sliceIdNotFound(sliceID)
 		return errors.New(errVal)
 	}
+	logger.GlobalLogger.Infof("printing the val", "val", sliceInfo.sliceGwInfo)
 	for k := range sliceInfo.sliceGwInfo {
 		if !sliceInfo.sliceGwInfo[k].tcConfigured {
 			err := s.configureTcForSliceGwPort(
@@ -453,6 +454,7 @@ func (s *NetOps) enforceSliceTc(sliceID string, newTc *TcInfo) error {
 
 	err = s.configureTcForSliceGw(sliceID, newTc)
 	if err != nil {
+		logger.GlobalLogger.Errorf(err.Error(), "err while configuring Tc For sliceGW")
 		return err
 	}
 
