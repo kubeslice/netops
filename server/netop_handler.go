@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"reflect"
 
 	netops "github.com/kubeslice/netops/pkg/proto"
 
@@ -248,14 +249,17 @@ func (s *NetOps) configureTcForSliceGw(sliceID string, newTc *TcInfo) error {
 	logger.GlobalLogger.Infof("printing the val", "val", sliceInfo.sliceGwInfo)
 	for k := range sliceInfo.sliceGwInfo {
 		if !sliceInfo.sliceGwInfo[k].tcConfigured {
-			err := s.configureTcForSliceGwPort(
-				sliceInfo.sliceGwInfo[k].gwType,
-				sliceInfo.sliceGwInfo[k].localPort,
-				sliceInfo.sliceGwInfo[k].remotePort,
-				sliceInfo.tc.priority, sliceInfo.tcLeafClassFqId)
-			if err == nil {
-				sliceInfo.sliceGwInfo[k].tcConfigured = true
+			for i := range sliceInfo.sliceGwInfo[k].localPorts{
+				err := s.configureTcForSliceGwPort(
+					sliceInfo.sliceGwInfo[k].gwType,
+					sliceInfo.sliceGwInfo[k].localPorts[i],
+					sliceInfo.sliceGwInfo[k].remotePorts[i],
+					sliceInfo.tc.priority, sliceInfo.tcLeafClassFqId)
+				if err != nil {
+					return err
+				}
 			}
+			sliceInfo.sliceGwInfo[k].tcConfigured = true
 		}
 	}
 
@@ -572,10 +576,12 @@ func updateSliceGwInfo(sliceID string, gwInfo *SliceGwInfo) {
 	} else {
 		// Check if sliceGW info has changed.
 		if NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].gwType != gwInfo.gwType ||
-			NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].localPort != gwInfo.localPort ||
-			NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].remotePort != gwInfo.remotePort {
+			reflect.DeepEqual(NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].localPorts,gwInfo.localPorts) ||
+			reflect.DeepEqual(NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].remotePorts, gwInfo.remotePorts) {
+			logger.GlobalLogger.Infof("slicegw info changed",gwInfo,NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId])
 			NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId] = gwInfo
 			NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].tcConfigured = false
+			
 		}
 	}
 }

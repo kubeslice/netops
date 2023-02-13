@@ -88,7 +88,7 @@ func (s *NetOps) UpdateConnectionContext(ctx context.Context, conContext *netops
 	if conContext == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Connection Context is Empty")
 	}
-	if conContext.GetLocalSliceGwNodePort() == "" {
+	if conContext.GetLocalSliceGwNodePorts() == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid Slice Gateway Node Port")
 	}
 	if conContext.GetLocalSliceGwHostType().String() == "" {
@@ -101,8 +101,8 @@ func (s *NetOps) UpdateConnectionContext(ctx context.Context, conContext *netops
 		&SliceGwInfo{
 			sliceGwId:  conContext.GetLocalSliceGwId(),
 			gwType:     sliceGwType(conContext.GetLocalSliceGwHostType().String()),
-			localPort:  conContext.GetLocalSliceGwNodePort(),
-			remotePort: conContext.GetRemoteSliceGwNodePort(),
+			localPorts:  conContext.GetLocalSliceGwNodePorts(),
+			remotePorts: conContext.GetRemoteSliceGwNodePorts(),
 		},
 	)
 
