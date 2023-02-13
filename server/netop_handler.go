@@ -223,7 +223,7 @@ func (s *NetOps) configureTcForSliceGwPort(gwType sliceGwType, localPort string,
 	cmdOut, err := runTcCommand(tcCmd)
 	if err != nil {
 		errStr := TcCmdError(tcCmd, err, cmdOut)
-		logger.GlobalLogger.Errorf(errStr, "err while running tc command 1")
+		logger.GlobalLogger.Errorf(errStr)
 		return errors.New(errStr)
 	}
 	logger.GlobalLogger.Infof(tcCmdOut(tcCmd, cmdOut))
@@ -232,7 +232,7 @@ func (s *NetOps) configureTcForSliceGwPort(gwType sliceGwType, localPort string,
 	cmdOut, err = runTcCommand(tcCmd)
 	if err != nil {
 		errStr := TcCmdError(tcCmd, err, cmdOut)
-		logger.GlobalLogger.Errorf(errStr, "err while running tc command 2")
+		logger.GlobalLogger.Errorf(errStr)
 		return errors.New(errStr)
 	}
 	logger.GlobalLogger.Infof(tcCmdOut(tcCmd, cmdOut))
@@ -246,10 +246,9 @@ func (s *NetOps) configureTcForSliceGw(sliceID string, newTc *TcInfo) error {
 		errVal := sliceIdNotFound(sliceID)
 		return errors.New(errVal)
 	}
-	logger.GlobalLogger.Infof("printing the val", "val", sliceInfo.sliceGwInfo)
 	for k := range sliceInfo.sliceGwInfo {
 		if !sliceInfo.sliceGwInfo[k].tcConfigured {
-			for i := range sliceInfo.sliceGwInfo[k].localPorts{
+			for i := range sliceInfo.sliceGwInfo[k].localPorts {
 				err := s.configureTcForSliceGwPort(
 					sliceInfo.sliceGwInfo[k].gwType,
 					sliceInfo.sliceGwInfo[k].localPorts[i],
@@ -576,12 +575,12 @@ func updateSliceGwInfo(sliceID string, gwInfo *SliceGwInfo) {
 	} else {
 		// Check if sliceGW info has changed.
 		if NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].gwType != gwInfo.gwType ||
-			reflect.DeepEqual(NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].localPorts,gwInfo.localPorts) ||
+			reflect.DeepEqual(NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].localPorts, gwInfo.localPorts) ||
 			reflect.DeepEqual(NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].remotePorts, gwInfo.remotePorts) {
-			logger.GlobalLogger.Infof("slicegw info changed",gwInfo,NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId])
+			logger.GlobalLogger.Infof("slicegw info changed", gwInfo, NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId])
 			NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId] = gwInfo
 			NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].tcConfigured = false
-			
+
 		}
 	}
 }
