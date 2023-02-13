@@ -12,7 +12,7 @@ kubeslice-netops: ## Build and run kubeslice-netops.
 
 .PHONY: docker-build
 docker-build: kubeslice-netops
-	docker build -t kubeslice-netop:${VERSION} --build-arg PLATFORM=amd64 . && docker tag kubeslice-netop:${VERSION} docker.io/rahulsawra/netops:${VERSION}
+	docker build -t kubeslice-netop:${VERSION} --build-arg PLATFORM=amd64 . && docker tag kubeslice-netop:${VERSION} docker.io/aveshasystems/netops:${VERSION}
 
 .PHONY: chart-deploy
 chart-deploy:
@@ -22,4 +22,4 @@ chart-deploy:
 
 .PHONY: docker-push
 docker-push:
-	docker push docker.io/rahulsawra/netops:${VERSION}
+	docker push docker.io/aveshasystems/netops:${VERSION}
