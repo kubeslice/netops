@@ -232,6 +232,7 @@ func (s *NetOps) configureTcForSliceGwPort(gwType sliceGwType, localPort string,
 	if err != nil {
 		errStr := TcCmdError(tcCmd, err, cmdOut)
 		logger.GlobalLogger.Errorf(errStr)
+		return errors.New(errStr)
 	}
 	logger.GlobalLogger.Infof(tcCmdOut(tcCmd, cmdOut))
 
