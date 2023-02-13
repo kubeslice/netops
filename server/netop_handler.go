@@ -222,7 +222,7 @@ func (s *NetOps) configureTcForSliceGwPort(gwType sliceGwType, localPort string,
 	cmdOut, err := runTcCommand(tcCmd)
 	if err != nil {
 		errStr := TcCmdError(tcCmd, err, cmdOut)
-		logger.GlobalLogger.Errorf(errStr)
+		logger.GlobalLogger.Errorf(errStr, "err while running tc command 1")
 		return errors.New(errStr)
 	}
 	logger.GlobalLogger.Infof(tcCmdOut(tcCmd, cmdOut))
@@ -231,7 +231,7 @@ func (s *NetOps) configureTcForSliceGwPort(gwType sliceGwType, localPort string,
 	cmdOut, err = runTcCommand(tcCmd)
 	if err != nil {
 		errStr := TcCmdError(tcCmd, err, cmdOut)
-		logger.GlobalLogger.Errorf(errStr)
+		logger.GlobalLogger.Errorf(errStr, "err while running tc command 2")
 		return errors.New(errStr)
 	}
 	logger.GlobalLogger.Infof(tcCmdOut(tcCmd, cmdOut))
