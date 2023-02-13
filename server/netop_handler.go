@@ -506,9 +506,10 @@ func (s *NetOps) enforceSliceQosPolicy(sliceID string, sliceName string, qosProf
 	err := s.enforceSliceTc(sliceID, sliceTc)
 	if err != nil {
 		logger.GlobalLogger.Errorf("Failed to enforce TC settings for slice: %v, tc: %v, err: %v", sliceID, sliceTc, err)
+		return err
 	}
 
-	return err
+	return nil
 }
 
 func (s *NetOps) handleSliceLifeCycleEvent(sliceName string, sliceEvent netops.EventType) error {
