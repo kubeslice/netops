@@ -232,6 +232,7 @@ func (s *NetOps) configureTcForSliceGwPort(gwType sliceGwType, localPort string,
 	if err != nil {
 		errStr := TcCmdError(tcCmd, err, cmdOut)
 		logger.GlobalLogger.Errorf(errStr)
+		return errors.New(errStr)
 	}
 	logger.GlobalLogger.Infof(tcCmdOut(tcCmd, cmdOut))
 
@@ -246,14 +247,17 @@ func (s *NetOps) configureTcForSliceGw(sliceID string, newTc *TcInfo) error {
 	}
 	for k := range sliceInfo.sliceGwInfo {
 		if !sliceInfo.sliceGwInfo[k].tcConfigured {
-			err := s.configureTcForSliceGwPort(
-				sliceInfo.sliceGwInfo[k].gwType,
-				sliceInfo.sliceGwInfo[k].localPort,
-				sliceInfo.sliceGwInfo[k].remotePort,
-				sliceInfo.tc.priority, sliceInfo.tcLeafClassFqId)
-			if err == nil {
-				sliceInfo.sliceGwInfo[k].tcConfigured = true
+			for i := range sliceInfo.sliceGwInfo[k].localPorts {
+				err := s.configureTcForSliceGwPort(
+					sliceInfo.sliceGwInfo[k].gwType,
+					sliceInfo.sliceGwInfo[k].localPorts[i],
+					sliceInfo.sliceGwInfo[k].remotePorts[i],
+					sliceInfo.tc.priority, sliceInfo.tcLeafClassFqId)
+				if err != nil {
+					return err
+				}
 			}
+			sliceInfo.sliceGwInfo[k].tcConfigured = true
 		}
 	}
 
@@ -452,6 +456,7 @@ func (s *NetOps) enforceSliceTc(sliceID string, newTc *TcInfo) error {
 
 	err = s.configureTcForSliceGw(sliceID, newTc)
 	if err != nil {
+		logger.GlobalLogger.Errorf(err.Error(), "err while configuring Tc For sliceGW")
 		return err
 	}
 
@@ -505,9 +510,10 @@ func (s *NetOps) enforceSliceQosPolicy(sliceID string, sliceName string, qosProf
 	err := s.enforceSliceTc(sliceID, sliceTc)
 	if err != nil {
 		logger.GlobalLogger.Errorf("Failed to enforce TC settings for slice: %v, tc: %v, err: %v", sliceID, sliceTc, err)
+		return err
 	}
 
-	return err
+	return nil
 }
 
 func (s *NetOps) handleSliceLifeCycleEvent(sliceName string, sliceEvent netops.EventType) error {
@@ -568,10 +574,34 @@ func updateSliceGwInfo(sliceID string, gwInfo *SliceGwInfo) {
 	} else {
 		// Check if sliceGW info has changed.
 		if NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].gwType != gwInfo.gwType ||
-			NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].localPort != gwInfo.localPort ||
-			NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].remotePort != gwInfo.remotePort {
+		!sameStringSlice(NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].localPorts, gwInfo.localPorts) ||
+		!sameStringSlice(NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].remotePorts, gwInfo.remotePorts) {
+			logger.GlobalLogger.Infof("slicegw info changed",gwInfo,NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId])
 			NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId] = gwInfo
 			NetOpHandle[sliceID].sliceGwInfo[gwInfo.sliceGwId].tcConfigured = false
 		}
 	}
+}
+
+func sameStringSlice(x, y []string) bool {
+    if len(x) != len(y) {
+        return false
+    }
+    // create a map of string -> int
+    diff := make(map[string]int, len(x))
+    for _, _x := range x {
+        // 0 value for int is 0, so just increment a counter for the string
+        diff[_x]++
+    }
+    for _, _y := range y {
+        // If the string _y is not in diff bail out early
+        if _, ok := diff[_y]; !ok {
+            return false
+        }
+        diff[_y] -= 1
+        if diff[_y] == 0 {
+            delete(diff, _y)
+        }
+    }
+    return len(diff) == 0
 }

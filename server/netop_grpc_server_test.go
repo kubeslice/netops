@@ -37,7 +37,7 @@ import (
 
 func MockBootstrapNetOpPod() error {
 	mockSliceGwInfo := make(map[string]*SliceGwInfo)
-	mockSliceGwInfo["test-slice"] = &SliceGwInfo{tcConfigured: false, localPort: "5000", remotePort: "5000", gwType: sliceGwType("SLICE_GW_SERVER")}
+	mockSliceGwInfo["test-slice"] = &SliceGwInfo{tcConfigured: false, localPorts: []string{"5000", "6000"}, remotePorts: []string{"5000", "6000"}, gwType: sliceGwType("SLICE_GW_SERVER")}
 	NetOpHandle = make(map[string]*SliceInfo)
 	NetOpHandle["randomid"] = &SliceInfo{sliceName: "test-slice", qosProfile: &SliceQosProfile{class: classType(netops.ClassType_HTB.String()), bwCeiling: 1, bwGuaranteed: htbRootHandleId, priority: 2}, sliceGwInfo: mockSliceGwInfo, tcLeafClassFqId: "randomLeafID", tc: &TcInfo{class: classType(netops.ClassType_HTB.String()), bwCeiling: 1, bwGuaranteed: htbRootHandleId, priority: 2}, tcInited: false}
 	NetOpHandle["randomid2"] = &SliceInfo{sliceName: "test-slice", qosProfile: &SliceQosProfile{class: classType(netops.ClassType_HTB.String()), bwCeiling: 1, bwGuaranteed: htbRootHandleId, priority: 2}, sliceGwInfo: mockSliceGwInfo, tcLeafClassFqId: "randomLeafID"}

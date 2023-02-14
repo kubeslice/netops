@@ -33,8 +33,8 @@ type SliceGwInfo struct {
 	// Slice GW ID
 	sliceGwId    string
 	gwType       sliceGwType
-	localPort    string
-	remotePort   string
+	localPorts    []string
+	remotePorts   []string
 	tcConfigured bool
 }
 
