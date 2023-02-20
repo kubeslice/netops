@@ -1,7 +1,7 @@
 # NetOps
 
 
-The netop pods enforce the QoS Profile for a slice. It uses Linux TC (Traffic Control) for the slice traffic classification.
+The Netops pods enforce the QoS Profile for a slice. It uses Linux TC (Traffic Control) for the slice traffic classification.
 
 ## Get Started
 
@@ -18,7 +18,7 @@ Before you begin, make sure the following prerequisites are met:
 * You have prepared the environment to install [`kubeslice-controller`](https://github.com/kubeslice/kubeslice-controller) on the controller cluster
  and [`worker-operator`](https://github.com/kubeslice/worker-operator) on the worker cluster. For more information, see [Prerequisites](https://kubeslice.io/documentation/open-source/0.5.0/getting-started-with-cloud-clusters/prerequisites/).
  
-### Build and Deploy netops on a Kind Cluster
+### Build and Deploy Netops on a Kind Cluster
 
 To download the latest netops docker hub image, click [here](https://hub.docker.com/r/aveshasystems/netops).
 
@@ -50,13 +50,13 @@ cd netops
 ```
 
 2. Edit the `VERSION` variable in the Makefile to change the docker tag to be built.
-Image is set as `docker.io/aveshasystems/netops:$(VERSION)` in the Makefile. Modiy this if required.
+The image is set as `docker.io/aveshasystems/netops:$(VERSION)` in the Makefile. Modiy this if required.
 
 ```bash
 make docker-build
 ```
 
-### Run Locally on a Kind Clusters
+### Run Locally on a Kind Cluster
 
 1. You can load the netops image on your kind cluster using the following command:
 
@@ -83,10 +83,10 @@ make docker-build
    ```
 
 
-### Deploy on a Cluster
+### Deploy Netops on a Cluster
 
-Update a chart values file called `yourvaluesfile.yaml` that you have previously created.
-Refer to the [values.yaml](https://github.com/kubeslice/charts/blob/master/charts/kubeslice-worker/values.yaml) to create `yourvaluesfiel.yaml` and update the netop image subsection to use the local image.
+Update the chart values file called `yourvaluesfile.yaml` that you have previously created.
+Refer to the [values.yaml](https://github.com/kubeslice/charts/blob/master/charts/kubeslice-worker/values.yaml) to create `yourvaluesfiel.yaml` and update the Netops image subsection to use the local image.
 
 From the sample: 
 
