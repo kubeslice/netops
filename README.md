@@ -20,7 +20,7 @@ Before you begin, make sure the following prerequisites are met:
  
 ### Build and Deploy Netops on a Kind Cluster
 
-To download the latest netops docker hub image, click [here](https://hub.docker.com/r/aveshasystems/netops).
+To download the latest NetOps docker hub image, click [here](https://hub.docker.com/r/aveshasystems/netops).
 
 ```console
 docker pull aveshasystems/netops:latest
@@ -42,7 +42,7 @@ helm repo update
 
 ### Build docker images
 
-1. Clone the latest version of netops from  the `master` branch. 
+1. Clone the latest version of NetOps from  the `master` branch. 
 
 ```bash
 git clone https://github.com/kubeslice/netops.git
@@ -83,7 +83,7 @@ make docker-build
    ```
 
 
-### Deploy Netops on a Cluster
+### Deploy NetOps on a Cluster
 
 Update the chart values file called `yourvaluesfile.yaml` that you have previously created.
 Refer to the [values.yaml](https://github.com/kubeslice/charts/blob/master/charts/kubeslice-worker/values.yaml) to create `yourvaluesfiel.yaml` and update the Netops image subsection to use the local image.
