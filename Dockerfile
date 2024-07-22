@@ -18,22 +18,19 @@
 ##########################################################
 
 ARG PLATFORM
-FROM ${PLATFORM}/golang:1.17.7-alpine3.15 as gobuilder
-
-# Install git.
-# Git is required for fetching the dependencies.
-RUN apk update && apk add --no-cache git make build-base
+FROM golang:1.22.5 as gobuilder
 
 # Set the Go source path
 WORKDIR /kubeslice/kubeslice-netops/
+COPY go.mod go.sum ./
+ADD vendor vendor
 COPY . .
 # Build the binary.esah
-RUN go mod download && \
-    go env -w GOPRIVATE=github.com/kubeslice && \
-    CGO_ENABLED=1 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -a -o bin/kubeslice-netops main.go
+RUN go env -w GOPRIVATE=github.com/kubeslice && \
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -mod=vendor -a -o bin/kubeslice-netops main.go
 
 # Build reduced image from base alpine
-FROM ${PLATFORM}/alpine:3.15
+FROM ${PLATFORM}/alpine:3.20
 
 # Add the necessary pakages:
 # tc - is needed for traffic control and shaping on the kubeslice-netops.  it is part of the iproute2
