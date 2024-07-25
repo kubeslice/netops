@@ -61,7 +61,7 @@ make docker-build
 1. You can load the netops image on your kind cluster using the following command:
 
    ```bash
-   kind load docker-image my-custom-image:unique-tag --name clustername
+   kind load docker-image <my-custom-image>:<unique-tag> --name <clustername>
    ```
 
   Example
