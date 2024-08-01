@@ -1,5 +1,5 @@
 # NetOps
-
+ 
 
 The Netops pods enforce the QoS Profile for a slice. It uses Linux TC (Traffic Control) for the slice traffic classification.
 
