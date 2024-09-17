@@ -1,8 +1,12 @@
-@Library('jenkins-library@opensource-release') _
+@Library('jenkins-library@opensource-release-multiarch') _
 dockerImagePipeline(
   script: this,
-  service: 'netops',
-  dockerfile: 'Dockerfile',
-  buildContext: '.',
-  buildArguments: [PLATFORM:"amd64"]
+  services: ['netops'],
+  dockerfiles: ['Dockerfile'],
+  pushed: true,
+  buildArgumentsList: [
+    [ENV: 'production', PLATFORM: 'linux/arm64,linux/amd64']
+]
+  
 )
+
