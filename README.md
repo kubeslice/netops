@@ -6,8 +6,8 @@ The Netops pods enforce the QoS Profile for a slice. It uses Linux TC (Traffic C
 ## Get Started
 
 Please refer to our documentation on:
-- [Install KubeSlice on cloud clusters](https://kubeslice.io/documentation/open-source/1.3.0/category/install-kubeslice).
-- [Install KubeSlice on kind clusters using our Sandbox](https://kubeslice.io/documentation/open-source/1.3.0/playground/sandbox).
+- [Install KubeSlice on cloud clusters](https://kubeslice.io/documentation/open-source/latest/category/install-kubeslice).
+- [Install KubeSlice on kind clusters using our Sandbox](https://kubeslice.io/documentation/open-source/latest/playground/sandbox).
 
 ### Prerequisites
 
@@ -16,7 +16,7 @@ Before you begin, make sure the following prerequisites are met:
 * A running [`kind`](https://kind.sigs.k8s.io/) cluster.
 * [`kubectl`](https://kubernetes.io/docs/tasks/tools/) is installed and configured.
 * You have prepared the environment to install [`kubeslice-controller`](https://github.com/kubeslice/kubeslice-controller) on the controller cluster
- and [`worker-operator`](https://github.com/kubeslice/worker-operator) on the worker cluster. For more information, see [Prerequisites](https://kubeslice.io/documentation/open-source/1.3.0/category/prerequisites).
+ and [`worker-operator`](https://github.com/kubeslice/worker-operator) on the worker cluster. For more information, see [Prerequisites](https://kubeslice.io/documentation/open-source/latest/category/prerequisites).
  
 ### Build and Deploy Netops on a Kind Cluster
 
@@ -28,13 +28,13 @@ docker pull aveshasystems/netops:latest
 
 ### Set up Your Helm Repo
 
-If you have not added avesha helm repo yet, add it.
+If you have not added Avesha's `helm repo` yet, add it.
 
 ```console
 helm repo add avesha https://kubeslice.github.io/charts/
 ```
 
-Upgrade the avesha helm repo.
+Upgrade Avesha's `helm repo`.
 
 ```console
 helm repo update
