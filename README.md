@@ -28,13 +28,13 @@ docker pull aveshasystems/netops:latest
 
 ### Set up Your Helm Repo
 
-If you have not added avesha helm repo yet, add it.
+If you have not added Avesha's `helm repo` yet, add it.
 
 ```console
 helm repo add avesha https://kubeslice.github.io/charts/
 ```
 
-Upgrade the avesha helm repo.
+Upgrade Avesha's `helm repo`.
 
 ```console
 helm repo update
