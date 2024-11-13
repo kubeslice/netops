@@ -17,8 +17,10 @@
 #limitations under the License.
 ##########################################################
 
-ARG PLATFORM
 FROM golang:1.22.5 as gobuilder
+
+ARG TARGETPLATFORM
+ARG TARGETARCH
 
 # Set the Go source path
 WORKDIR /kubeslice/kubeslice-netops/
@@ -27,10 +29,10 @@ ADD vendor vendor
 COPY . .
 # Build the binary.esah
 RUN go env -w GOPRIVATE=github.com/kubeslice && \
-    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -mod=vendor -a -o bin/kubeslice-netops main.go
+    CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH} GO111MODULE=on go build -mod=vendor -a -o bin/kubeslice-netops main.go
 
 # Build reduced image from base alpine
-FROM ${PLATFORM}/alpine:3.20
+FROM alpine:3.20
 
 # Add the necessary pakages:
 # tc - is needed for traffic control and shaping on the kubeslice-netops.  it is part of the iproute2
